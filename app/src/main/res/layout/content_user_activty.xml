@@ -8,4 +8,26 @@
     tools:context="com.cyt.cashyourtrash.UserActivity"
     tools:showIn="@layout/app_bar_user_activty">
 
+    <TextView
+        android:id="@+id/bin_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingLeft="100px"
+        android:paddingRight="100px"
+        android:text="Welcome to SmartBin. Now you can scan the dustbin code and add coins to your account just by putting right garbage into the bin.
+You can redeem it too later through earned coins."
+        android:textColor="#000"
+        android:textSize="50px" />
+
+    <com.journeyapps.barcodescanner.BarcodeView
+        android:id="@+id/barcode_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="150px"
+        android:layout_marginLeft="100px"
+        android:layout_marginRight="100px"
+        android:layout_marginTop="150px"
+        android:visibility="invisible" />
+
 </android.support.constraint.ConstraintLayout>

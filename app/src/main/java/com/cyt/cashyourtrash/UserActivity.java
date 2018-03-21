@@ -15,7 +15,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.journeyapps.barcodescanner.BarcodeView;
+import com.journeyapps.barcodescanner.CompoundBarcodeView;
+
+import java.util.List;
 
 public class UserActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,10 +41,13 @@ public class UserActivity extends AppCompatActivity
     Toolbar toolbar;
     TextView surveyorUserName;
     TextView surveyorName;
+    TextView binText;
 
     String username;
     String name;
     Integer walletMoney;
+
+    BarcodeView barcodeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +56,8 @@ public class UserActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        barcodeView = (BarcodeView) findViewById(R.id.barcode_view);
+        binText = (TextView) findViewById(R.id.bin_text);
 
         //check credentials for login
         pref = getApplicationContext().getSharedPreferences("CYTPref", 0);
@@ -50,23 +66,23 @@ public class UserActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Dashboard");
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        header=navigationView.getHeaderView(0);
+        header = navigationView.getHeaderView(0);
 
         username = getIntent().getStringExtra("UserName");
         name = getIntent().getStringExtra("Name");
-        walletMoney = getIntent().getIntExtra("WalletMoney",0);
+        walletMoney = getIntent().getIntExtra("WalletMoney", 0);
 
-        surveyorUserName=header.findViewById(R.id.user_username);
+        surveyorUserName = header.findViewById(R.id.user_username);
         surveyorUserName.setText(username);
 
-        surveyorName=header.findViewById(R.id.user_name);
+        surveyorName = header.findViewById(R.id.user_name);
         surveyorName.setText(name);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Service will be available soon.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -77,8 +93,9 @@ public class UserActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
     @Override
@@ -122,15 +139,27 @@ public class UserActivity extends AppCompatActivity
 
         if (id == R.id.nav_myAccount) {
             // Handle the account action
+            barcodeView.setVisibility(View.INVISIBLE);
+            binText.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_earn) {
-
+            barcodeView.setVisibility(View.VISIBLE);
+            binText.setVisibility(View.INVISIBLE);
+            onEarnClicked();
         } else if (id == R.id.nav_redeem) {
+            barcodeView.setVisibility(View.INVISIBLE);
+            binText.setVisibility(View.INVISIBLE);
 
         } else if (id == R.id.nav_Settings) {
+            barcodeView.setVisibility(View.INVISIBLE);
+            binText.setVisibility(View.INVISIBLE);
 
         } else if (id == R.id.nav_help) {
+            barcodeView.setVisibility(View.INVISIBLE);
+            binText.setVisibility(View.INVISIBLE);
 
         } else if (id == R.id.nav_about) {
+            barcodeView.setVisibility(View.INVISIBLE);
+            binText.setVisibility(View.INVISIBLE);
 
         } else if (id == R.id.nav_logout) {
 
@@ -138,12 +167,46 @@ public class UserActivity extends AppCompatActivity
             editor.clear();
             editor.apply();
 
-            Intent i = new Intent(UserActivity.this,LoginActivity.class);
+            Intent i = new Intent(UserActivity.this, LoginActivity.class);
             startActivity(i);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void onEarnClicked() {
+        Toast.makeText(getApplicationContext(), "Scan a barcode", Toast.LENGTH_LONG).show();
+        barcodeView.decodeContinuous(callback);
+    }
+
+    private BarcodeCallback callback = new BarcodeCallback() {
+        @Override
+        public void barcodeResult(final BarcodeResult result) {
+            //code to handle “result”
+//            Toast.makeText(getApplicationContext(), result.getText(), Toast.LENGTH_SHORT).show();
+            barcodeView.setVisibility(View.GONE);
+            binText.setText(result.getText());
+            binText.setVisibility(View.VISIBLE);
+            navigationView.getMenu().getItem(0).setChecked(true);
+
+        }
+
+        @Override
+        public void possibleResultPoints(List resultPoints) {
+        }
+    };
+
+    @Override
+    public void onResume() {
+        barcodeView.resume();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        barcodeView.pause();
+        super.onPause();
     }
 }
