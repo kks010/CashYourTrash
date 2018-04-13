@@ -54,6 +54,10 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
+    public String username = "";
+    public String password = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,14 +152,14 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        username = mUsernameView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -180,7 +184,9 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            performLogin(username,password);
+            if(username!= "" && password != ""){
+                performLogin(username,password);
+            }
         }
     }
 
@@ -268,8 +274,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Error error) {
                 showProgress(false);
                 Toast.makeText(getApplicationContext(),"Failed to sign in",Toast.LENGTH_SHORT).show();
-                Log.d("CYT", error.getMessage());
-
+//                Log.d("CYT", error.getMessage());
             }
         });
 

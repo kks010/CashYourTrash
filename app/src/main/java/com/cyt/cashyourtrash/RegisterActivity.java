@@ -39,6 +39,11 @@ public class RegisterActivity extends AppCompatActivity{
     private View mProgressView;
     private View mRegisterFormView;
 
+    String name = "";
+    String password = "";
+    String username = "";
+    Double mobileNo = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,10 +74,14 @@ public class RegisterActivity extends AppCompatActivity{
     private void attemptRegister() {
 
         // Store values at the time of the login attempt.
-        String name = mnameView.getText().toString();
-        String password = mPasswordView.getText().toString();
-        String username = mUsernameView.getText().toString();
-        Double mobileNo = Double.valueOf(mMobileNoView.getText().toString());
+        name = mnameView.getText().toString();
+        password = mPasswordView.getText().toString();
+        username = mUsernameView.getText().toString();
+        String mobileNoString = mMobileNoView.getText().toString();
+
+        if(!mobileNoString.isEmpty()) {
+           mobileNo = Double.valueOf(mobileNoString);
+        }
 
         boolean cancel = false;
         View focusView = null;
@@ -89,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity{
         }
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -107,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity{
         }
 
         // Check for a valid mobile no, if the user entered one.
-        if (TextUtils.isEmpty(mobileNo.toString())) {
+        if (TextUtils.isEmpty(mobileNoString)) {
             mMobileNoView.setError(getString(R.string.error_field_required));
             focusView = mMobileNoView;
             cancel = true;
@@ -125,7 +134,9 @@ public class RegisterActivity extends AppCompatActivity{
             // Show a progress spinner, and kick off a background task to
             // perform t9he user login attempt.;
             showProgress(true);
-            performRegister(name,username,password,mobileNo);
+            if(name != "" && username != "" && password != "" && mobileNo != null) {
+                performRegister(name, username, password, mobileNo);
+            }
 
         }
     }
@@ -213,8 +224,7 @@ public class RegisterActivity extends AppCompatActivity{
             @Override
             public void onFailure(Error error) {
                 Toast.makeText(getApplicationContext(),"Failed to register",Toast.LENGTH_SHORT).show();
-                Log.d("CYT", error.getMessage());
-
+//                Log.d("CYT", error.getMessage());
             }
         });
 

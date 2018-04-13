@@ -104,7 +104,7 @@ public class UserActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
         }
     }
 
@@ -148,7 +148,7 @@ public class UserActivity extends AppCompatActivity
         } else if (id == R.id.nav_redeem) {
             barcodeView.setVisibility(View.INVISIBLE);
             binText.setVisibility(View.INVISIBLE);
-
+            onRedeemClicked();
         } else if (id == R.id.nav_Settings) {
             barcodeView.setVisibility(View.INVISIBLE);
             binText.setVisibility(View.INVISIBLE);
@@ -176,6 +176,12 @@ public class UserActivity extends AppCompatActivity
         return true;
     }
 
+    private void onRedeemClicked() {
+        binText.setText("You can redeem your points here later");
+        binText.setVisibility(View.VISIBLE);
+        navigationView.getMenu().getItem(0).setChecked(true);
+    }
+
     private void onEarnClicked() {
         Toast.makeText(getApplicationContext(), "Scan a barcode", Toast.LENGTH_LONG).show();
         barcodeView.decodeContinuous(callback);
@@ -187,7 +193,7 @@ public class UserActivity extends AppCompatActivity
             //code to handle “result”
 //            Toast.makeText(getApplicationContext(), result.getText(), Toast.LENGTH_SHORT).show();
             barcodeView.setVisibility(View.GONE);
-            binText.setText(result.getText());
+            binText.setText("Welcome to " + result.getText() + "\n Put Trash Now");
             binText.setVisibility(View.VISIBLE);
             navigationView.getMenu().getItem(0).setChecked(true);
 
